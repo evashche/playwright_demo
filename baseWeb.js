@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+import test, { expect } from "@playwright/test";
 
 export function formatPrice(text) {
   return text?.match(/\d+(?:\.\d{1,2})?/g)[0];
@@ -24,25 +24,37 @@ export default class BaseWeb {
   text = new Text();
 
   async click() {
-    await this.page.locator(this.loc).click();
+    await test.step(`click ${this.constructor.name}`, async () => {
+      await this.page.locator(this.loc).click();
+    });
   }
 
   async clickFirst() {
-    await this.page.locator(this.loc).first().click();
+    await test.step(`click first element in ${this.constructor.name}`, async () => {
+      await this.page.locator(this.loc).first().click();
+    });
   }
 
   async getText() {
-    const text = await this.page.locator(this.loc).textContent();
+    let text;
+    await test.step(`get text of ${this.constructor.name}`, async () => {
+      text = await this.page.locator(this.loc).textContent();
+    });
     return text;
   }
 
   async getTextFirst() {
-    const text = await this.page.locator(this.loc).first().textContent();
+    let text;
+    await test.step(`search first text in ${this.constructor.name}`, async () => {
+      text = await this.page.locator(this.loc).first().textContent();
+    });
     return text;
   }
 
   async fill(text) {
-    await this.page.locator(this.loc).fill(text);
+    await test.step(`fill ${this.constructor.name} with text ${text}`, async () => {
+      await this.page.locator(this.loc).fill(text);
+    });
   }
 
   async goto(text) {
@@ -54,11 +66,15 @@ export default class BaseWeb {
   }
 
   async expectText(text) {
-    await expect(this.page.locator(this.loc)).toContainText(text);
+    await test.step(`expect ${this.constructor.name} contain text ${text}`, async () => {
+      await expect(this.page.locator(this.loc)).toContainText(text);
+    });
   }
 
   async expectNotText(text) {
-    await expect(this.page.locator(this.loc)).not.toContainText(text);
+    await test.step(`expect ${this.constructor.name} not contain text ${text}`, async () => {
+      await expect(this.page.locator(this.loc)).not.toContainText(text);
+    });
   }
 
   findText(text) {
